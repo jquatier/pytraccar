@@ -19,13 +19,14 @@ class API(object):
     """A class for the Traccar API."""
 
     def __init__(self, loop, session, username, password,
-                 host, port=8082, ssl=False):
+                 host, port=8082, ssl=False, timeout=5):
         """Initialize the class."""
         self._loop = loop
         self._auth = aiohttp.BasicAuth(username, password)
         schema = 'https' if ssl else 'http'
         self._api = schema + '://' + host + ':' + str(port) + '/api'
         self._session = session
+        self._timeout = timeout
         self._authenticated = False
         self._geofences = {}
         self._devices = []
@@ -36,7 +37,7 @@ class API(object):
         """Get the local installed version."""
         base_url = self._api + '/devices'
         try:
-            async with async_timeout.timeout(5, loop=self._loop):
+            async with async_timeout.timeout(self._timeout, loop=self._loop):
                 response = await self._session.get(base_url,
                                                    auth=self._auth,
                                                    headers=HEADERS)
@@ -86,7 +87,7 @@ class API(object):
         """Get the local installed version."""
         base_url = self._api + '/geofences'
         try:
-            async with async_timeout.timeout(5, loop=self._loop):
+            async with async_timeout.timeout(self._timeout, loop=self._loop):
                 response = await self._session.get(base_url,
                                                    auth=self._auth,
                                                    headers=HEADERS)
@@ -102,7 +103,7 @@ class API(object):
         """Get the local installed version."""
         base_url = self._api + '/devices'
         try:
-            async with async_timeout.timeout(5, loop=self._loop):
+            async with async_timeout.timeout(self._timeout, loop=self._loop):
                 response = await self._session.get(base_url,
                                                    auth=self._auth,
                                                    headers=HEADERS)
@@ -117,7 +118,7 @@ class API(object):
         """Get the local installed version."""
         base_url = self._api + '/positions'
         try:
-            async with async_timeout.timeout(5, loop=self._loop):
+            async with async_timeout.timeout(self._timeout, loop=self._loop):
                 response = await self._session.get(base_url,
                                                    auth=self._auth,
                                                    headers=HEADERS)
